@@ -329,11 +329,11 @@ class ClockifyHelper:
                 still_working = messagebox.askyesno(
                     "Activity Tracker",
                     f"Still working on \"{self.last_activity}\"?",
-                    parent=self.root  # parent is crucial!
+                    parent=self.root
                 )
                 if still_working:
                     self.last_reminder_time = datetime.now()
-                    self.reminder_popup_active = False  # ADD THIS
+                    self.reminder_popup_active = False
                     return
 
             activity = simpledialog.askstring(
