@@ -1,6 +1,6 @@
 # Clockify Helper - Background Time Tracking Assistant
 
-A Python application that runs in the background and periodically asks "What are you doing?" to help employees track their time without constantly interrupting their workflow.
+A Python application that runs in the background and periodically asks "What are you working on?" to help employees track their time without constantly interrupting their workflow.
 
 ## Overview
 
