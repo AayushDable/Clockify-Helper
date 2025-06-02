@@ -12,6 +12,7 @@ import webbrowser
 import pystray
 from PIL import Image, ImageDraw
 
+
 class ClockifyHelper:
     def __init__(self):
         """Initialize the application"""
@@ -283,6 +284,7 @@ class ClockifyHelper:
                 if not self.reminder_popup_active:
                     self.root.after(0, self.show_activity_popup)
 
+
     def update_ui_status(self):
         """Update UI status information"""
         self.current_activity_var.set(self.last_activity if self.last_activity else "None")
@@ -320,40 +322,25 @@ class ClockifyHelper:
         # Schedule next update for live countdown
         self.root.after(1000, self.update_ui_status)
 
-        
-    def show_activity_popup(self):
-        if self.in_break or self.reminder_popup_active:
-            return
-        self.reminder_popup_active = True
 
-        # Create a temporary window to ensure dialogs appear on top
-        temp_root = tk.Tk()
-        temp_root.withdraw()  # Hide the temporary window
-        temp_root.attributes('-topmost', True)  # Make it topmost
-        temp_root.lift()
-        temp_root.focus_force()
-
+    def _show_popup_main(self, was_hidden):
         try:
-            # If already working on a task, confirm with the user
             if self.last_activity:
                 still_working = messagebox.askyesno(
                     "Activity Tracker",
                     f"Still working on \"{self.last_activity}\"?",
-                    parent=temp_root  # Use temp window as parent
+                    parent=self.root  # parent is crucial!
                 )
                 if still_working:
-                    # Just reset the reminder time; do not log again
                     self.last_reminder_time = datetime.now()
-                    self.reminder_popup_active = False
+                    self.reminder_popup_active = False  # ADD THIS
                     return
-                # else, fall through to ask for new task
 
-            # Either no last activity, or user said 'no'
             activity = simpledialog.askstring(
-                "Activity Tracker", 
+                "Activity Tracker",
                 "What are you currently working on?",
                 initialvalue=self.last_activity if self.last_activity else "",
-                parent=temp_root  # Use temp window as parent
+                parent=self.root
             )
 
             if activity:
@@ -363,16 +350,47 @@ class ClockifyHelper:
                 if activity.strip() not in self.activity_history:
                     self.activity_history.append(activity.strip())
                 self.refresh_activities_list()
-                self.reminder_popup_active = False
+                self.reminder_popup_active = False  # ADD THIS
             else:
-                # User cancelled - snooze for default time
                 snooze_minutes = int(self.config.get('SETTINGS', 'snooze_duration_minutes'))
                 self.last_reminder_time = datetime.now() + timedelta(minutes=snooze_minutes)
-                self.reminder_popup_active = False
-        
+                self.reminder_popup_active = False  # ADD THIS
+
         finally:
-            # Always destroy the temporary window
-            temp_root.destroy()
+            self.root.attributes('-topmost', False)
+            if was_hidden:
+                self.root.withdraw()
+
+    def show_activity_popup(self):
+        if self.in_break or self.reminder_popup_active:
+            return
+        self.reminder_popup_active = True
+
+        # Remember if window was hidden
+        was_hidden = self.root.state() == 'withdrawn'
+        
+        # Temporarily show main window to ensure dialogs appear
+        if was_hidden:
+            self.root.deiconify()
+        
+        # Make sure window is visible and on top
+        self.root.state('normal')
+        self.root.lift()
+        self.root.focus_force()
+        self.root.attributes('-topmost', True)
+        self.root.update()
+
+        # Add a tiny pause to let window manager catch up
+        self.root.after(100, lambda: self._show_popup_main(was_hidden))
+
+    def handle_popup_response(self, still_working, popup):
+        popup.destroy()
+
+        if still_working:
+            self.last_reminder_time = datetime.now()
+        else:
+            # Show activity entry dialog
+            pass
 
 
     
