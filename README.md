@@ -90,25 +90,7 @@ Your activities are logged to `time_tracking_log.csv` with these columns:
 - Type (Work/Break)
 - Duration (in minutes)
 
-This file can be imported into Clockify or other time tracking systems.
-
-## Customization Ideas
-
-- **Activity Categories**: Add support for categorizing activities by project or client
-- **Sync with Clockify API**: Implement direct integration with Clockify using their API
-- **Productivity Analysis**: Add visualization of time spent on different activities
-- **Natural Language Processing**: Allow entering activities in natural language (e.g., "working on project X for client Y")
-- **Meeting Detection**: Integrate with calendar to automatically log meetings
-- **Mobile Notifications**: Send reminders to mobile devices when away from computer
-- **Time Estimation**: Compare estimated vs. actual time spent on activities
-- **Pomodoro Integration**: Combine with Pomodoro technique for focused work sessions
-
-## Troubleshooting
-
-- **Popup Not Showing**: Check if the application is running in the system tray
-- **System Tray Icon Missing**: Try reinstalling the pystray package
-- **Application Not Starting**: Check if tkinter and other dependencies are properly installed
-- **Log File Issues**: Ensure you have write permissions to the directory
+This file can be used for Clockify or other time tracking systems.
 
 ## License
 
